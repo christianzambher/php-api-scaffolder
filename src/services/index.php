@@ -6,19 +6,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = $_POST;
     $generator = new StructureGenerator();
     $generator->generate($data);
-    
-    //Cambiar de acuerdo la necesidad
-    $nombreModulo = $_POST["nomModulo"];
 
     //Cambiar de acuerdo la necesidad
-    $dirRoot = 'api' . $_POST["nomAPI"];
+    $dirRoot = 'api' . $data["nomAPI"];
 
-    $dir = $dirRoot . '/';
+    $rutaFinal = realpath(__DIR__ . '/../../public/zipfiles');
 
-    $rutaFinal = "zipfiles";
+    if (!$rutaFinal) {
+        $rutaFinal = __DIR__ . '/../../public/zipfiles';
+        mkdir($rutaFinal, 0777, true);
+    }
 
-    if (!file_exists($rutaFinal)) {
-        mkdir($rutaFinal);
+    // limpiar zips viejos
+    foreach (glob($rutaFinal . "/*.zip") as $oldZip) {
+        unlink($oldZip);
     }
 
     $zipService = new ZipService();
@@ -29,10 +30,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     rename($archivoZip, "$rutaFinal/$archivoZip");
 
-    $baseUrl = dirname($_SERVER['SCRIPT_NAME']); 
-    $downloadUrl = $baseUrl . "/$rutaFinal/$archivoZip";
+    $scriptPath = $_SERVER['SCRIPT_NAME'];
+    $projectRoot = explode('/src/', $scriptPath)[0];
+    $downloadUrl = $projectRoot . "/public/zipfiles/" . $archivoZip;
 
-    if (file_exists($rutaFinal . "/" . $archivoZip)) {
+    if (file_exists($rutaFinal)) {
         http_response_code(200);
         echo json_encode(array($downloadUrl, $archivoZip));
     } else {
