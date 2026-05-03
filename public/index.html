@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creador de Estructura</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../assets/css/all.css" />
+  <link rel="stylesheet" href="../assets/css/all.min.css" />
+  <script src="../assets/js/jquery-3.6.0.min.js"></script>
+  <script src="../assets/js/bootstrap.min.js"></script>
+  <script src="../assets/js/sweetalert2@11.js"></script>
+</head>
+
+<body class="bg-dark" style="background-image: url(../assets/css/back.png); background-repeat: no-repeat; background-size: 100%;">
+  <div class="container bg-white">
+    <h2>Creación de la Estructura</h2>
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-exclamation-circle"></i>&nbsp;Información necesaria
+      </div>
+      <div class="card-body">
+        <div class="row card-text">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="txtNombreModulo">Nombre del Modulo:</label>
+              <input type="text" id="txtNombreModulo" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="txtNombreApi">Nombre de la API:</label>
+              <input type="text" id="txtNombreApi" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="txtNombreClase">Nombre de la Clase:</label>
+              <input type="text" id="txtNombreClase" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="txtNombreFront">Nombre de los Archivos FRONT:</label>
+              <input type="text" id="txtNombreFront" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-sm btn-secondary" id="btnCancelarEstruc">
+          <i class="fas fa-window-close"></i>&nbsp;<span>Cancelar</span>
+        </button>
+        <button class="btn btn-sm btn-dark" id="btnCrearEstruc">
+          <i class="fas fa-plus-square"></i>&nbsp;<span>Crear</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script src="../assets/js/index.js"></script>
+</body>
+
+</html>

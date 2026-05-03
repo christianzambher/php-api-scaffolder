@@ -1,4 +1,3 @@
-var urlServices = "services/index.php";
 $(".card-footer button").attr("disabled", true);
 $("#txtNombreApi,#txtNombreClase,#txtNombreFront").attr("disabled", true);
 
@@ -30,7 +29,7 @@ $("#btnCancelarEstruc").on("click", function () {
 
 function crearEstructura(nomModulo, nomAPI, nomClase, nomFront) {
     $.ajax({
-        url: 'services/index.php',
+        url: '../src/services/index.php',
         async: false,
         type: "POST",
         data: { nomModulo, nomAPI, nomClase, nomFront },
@@ -52,7 +51,7 @@ function crearEstructura(nomModulo, nomAPI, nomClase, nomFront) {
             link.click();//ejecucion del evento click del elemento a creado
 
             $.ajax({
-                url: 'services/deleteFoldersApi.php',
+                url: '../src/services/deleteFoldersApi.php',
                 type: 'GET',
                 async: false,
                 success: function (response, status, xhr) {
@@ -61,7 +60,6 @@ function crearEstructura(nomModulo, nomAPI, nomClase, nomFront) {
             })
         },
         error: function (response, status, xhr) {
-            console.log(response, status, xhr)
             Swal.fire({
                 icon: "error",
                 title: "Error",
