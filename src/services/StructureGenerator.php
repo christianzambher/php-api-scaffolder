@@ -2,7 +2,12 @@
 require_once __DIR__ . '/TemplateService.php';
 
 class StructureGenerator {
-
+    
+    /**
+     * Generates the directory structure and files for the API based on the provided data.
+     * @param  array $data Associative array containing the necessary information to generate the structure (e.g., API name, class name, etc.)
+     * @return void
+     */
     public function generate($data) {
         $dirRoot = 'api' . $data["nomAPI"];
 
@@ -18,7 +23,12 @@ class StructureGenerator {
         $this->createJS($dirRoot, $data);
         $this->createRoutes($dirRoot, $data);
         $this->createPublic($dirRoot, $data);
-    }
+    }    
+    /**
+     * Creates a directory if it does not already exist.
+     * @param  string $path Directory path to create
+     * @return void
+     */
     private function createDir($path) {
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
@@ -36,7 +46,7 @@ class StructureGenerator {
 
         //Archivo Funciones
         $contenido = $templateService->render(
-        __DIR__ . '/../templates/funciones.tpl.php',
+            __DIR__ . '/../templates/funciones.tpl.php',
             [
                 'ClassName' => $nombreClase
             ]
@@ -44,185 +54,47 @@ class StructureGenerator {
         file_put_contents($dirFunciones . '/funciones.class.php', $contenido);
     }
     private function createHtml($path, $data) {
+        $templateService = new TemplateService();
+
         $nombreFront = $data["nomFront"];
+
         //Directorio HTML
         $dirHtml = $path . '/' . "html";
 
-        //Archivo HTML
-        $fileHtml = $nombreFront . ".html";
-        $fileHtmlDir = fopen($dirHtml . '/' . $fileHtml, "w");
-        $dataHtml = '<div class="row">
-        <div class="col-lg-12">
-            <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <span class="kt-portlet__head-icon">
-                            <i class="flaticon-map-location"></i>
-                        </span>
-                        <h3 class="kt-portlet__head-title">
-                            ' . $data['nomModulo'] . '
-                        </h3>
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
-                        
-                </div>
-            </div>
-        </div>
-        </div>
-        <script src="' . $path . '/js/services.js"></script>
-        <script src="' . $path . '/js/' . $nombreFront . '.js"></script>';
-        fwrite($fileHtmlDir, $dataHtml);
+        $contenido = $templateService->render(
+            __DIR__ . '/../templates/html.tpl.php',
+            [
+                'ModuleName' => $data['nomModulo'],
+                'FrontName' => $nombreFront,
+                'Path' => $path
+            ]
+        );
+
+        file_put_contents("$dirHtml/$nombreFront.html", $contenido);
     }
     private function createJS($path, $data) {
+        $templateService = new TemplateService();
+
         $nombreFront = $data["nomFront"];
         //Directorio JS
         $dirJs = $path . '/' . "js";
         
         //Archivo JS
-        $fileJs = $nombreFront . ".js";
-        $fileJsDir = fopen($dirJs . '/' . $fileJs, "w");
-        $dataJs = '$(document).ready(function () {
+        $contenidoJs = $templateService->render(
+            __DIR__ . '/../templates/js.tpl.php'
+        );
 
-        });
-
-        //#region Eventos
-
-        //#endregion
-
-        //#region Variables
-        var servicios = new Servicios(); //TODO Objeto de Servicios
-        //#endregion
-
-        //#region Funciones
-
-        //#endregion';
-        fwrite($fileJsDir, $dataJs);
+        file_put_contents("$dirJs/$nombreFront.js", $contenidoJs);
 
         //Archivo Services.js
-        $fileServices = "services.js";
-        $fileServicesDir = fopen($dirJs . '/' . $fileServices, "w");
-        $dataServices = 'var Servicios = function () {
-            var apiUrl = "' . $path . '/public/"; //TODO URL de los servicios Web
-            var activeAjaxRequests = 0; //TODO Cantidad de Petición de AJAX
+        $contenidoServices = $templateService->render(
+            __DIR__ . '/../templates/services.tpl.php',
+            [
+                'ApiPath' => $path
+            ]
+        );
 
-            this.fnGet = function(callback){
-                if (apiUrl) {
-                    $.ajax({
-                        url: apiUrl + "Get",
-                        beforeSend: function () {
-                            activeAjaxRequests++;
-                            if (activeAjaxRequests === 1) {
-                                Swal.fire({
-                                    title: "Por favor, espere",
-                                    html: ' . "'" . '<strong>Cargando...</strong>\
-                                        <div class="text-center">\
-                                            <div class="spinner-border" role="status">\
-                                                <span class="sr-only">Loading...</span>\
-                                            </div>\
-                                        </div>' . "'" . ',
-                                    timerProgressBar: true,
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false
-                                });
-                            }
-                        },
-                        complete: function () {
-                            activeAjaxRequests--;
-                            if (activeAjaxRequests === 0) {
-                                swal.close();
-                            }
-                        },
-                        success: function (result, status, xhr) {
-                            if (typeof callback == "function") {
-                                callback(result, status, xhr);
-                            }
-                        }, error: function () {
-                            swal.close();
-                        }
-                    });
-                }
-            }
-
-            this.fnGetById = function(id,callback){
-                if (apiUrl) {
-                    $.ajax({
-                        url: apiUrl + "getById/"+id,
-                        beforeSend: function () {
-                            activeAjaxRequests++;
-                            if (activeAjaxRequests === 1) {
-                                Swal.fire({
-                                    title: "Por favor, espere",
-                                    html: ' . "'" . '<strong>Cargando...</strong>\
-                                        <div class="text-center">\
-                                            <div class="spinner-border" role="status">\
-                                                <span class="sr-only">Loading...</span>\
-                                            </div>\
-                                        </div>' . "'" . ',
-                                    timerProgressBar: true,
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false
-                                });
-                            }
-                        },
-                        complete: function () {
-                            activeAjaxRequests--;
-                            if (activeAjaxRequests === 0) {
-                                swal.close();
-                            }
-                        },
-                        success: function (result, status, xhr) {
-                            if (typeof callback == "function") {
-                                callback(result, status, xhr);
-                            }
-                        }, error: function () {
-                            swal.close();
-                        }
-                    });
-                }
-            }
-
-            this.fnPost = function(data,callback){
-                if (apiUrl) {
-                    $.ajax({
-                        url: apiUrl + "Post",
-                        type: "POST",
-                        data: { data },
-                        beforeSend: function () {
-                            activeAjaxRequests++;
-                            if (activeAjaxRequests === 1) {
-                                Swal.fire({
-                                    title: "Por favor, espere",
-                                    html: ' . "'" . '<strong>Cargando...</strong>\
-                                        <div class="text-center">\
-                                            <div class="spinner-border" role="status">\
-                                                <span class="sr-only">Loading...</span>\
-                                            </div>\
-                                        </div>' . "'" . ',
-                                    timerProgressBar: true,
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false
-                                });
-                            }
-                        },
-                        complete: function () {
-                            activeAjaxRequests--;
-                            if (activeAjaxRequests === 0) {
-                                swal.close();
-                            }
-                        },
-                        success: function (result, status, xhr) {
-                            if (typeof callback == "function") {
-                                callback(result, status, xhr);
-                            }
-                        }, error: function () {
-                            swal.close();
-                        }
-                    });
-                }
-            }
-        }';
-        fwrite($fileServicesDir, $dataServices);
+        file_put_contents("$dirJs/services.js", $contenidoServices);
     }
     private function createRoutes($path, $data) {
         $templateService = new TemplateService();
@@ -246,32 +118,29 @@ class StructureGenerator {
         file_put_contents($dirRutas . '/rutas.php', $contenido);
     }
     private function createPublic($path, $data) {
+        $templateService = new TemplateService();
+
         //Directorio Public
         $dirPublic = $path . '/' . "public";
         
         //Archivo .HTACCESS
-        $fileHtaccess = ".htaccess";
-        $fileHtaccessDir = fopen($dirPublic . '/' . $fileHtaccess, "w");
-        $dataHtaccess = "RewriteEngine ON
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteRule ^ index.php [QSA,L]";
-        fwrite($fileHtaccessDir, $dataHtaccess);
-        //Archivo INDEX.PHP
-        $fileIndex = "index.php";
-        $fileIndexDir = fopen($dirPublic . '/' . $fileIndex, "w");
-        $dataIndex = "<?php
-        use Slim\Factory\AppFactory;
+        $contenidoHtaccess = $templateService->render(
+            __DIR__ . '/../templates/htaccess.tpl.php'
+        );
+
+        file_put_contents("$dirPublic/.htaccess", $contenidoHtaccess);
         
-        ini_set('display_errors', 1);
-        session_start();
-        require __DIR__ . '/../../vendor/autoload.php';
-        $" . "app = AppFactory::create();
-        $" . "app->setBasePath('/sistema/" . $path . "/public');
-        $" . "app->addRoutingMiddleware();
-        $" . "app->addErrorMiddleware(true, true, true);
-        require __DIR__ . '/../rutas/rutas.php';
-        $" . "app->run();";
-        fwrite($fileIndexDir, $dataIndex);
+        //Archivo INDEX.PHP
+        $pathRoot = isset($data['nomDirPadre']) ? ('/' . $data['nomDirPadre'] . '/') : '';
+        $basePath = $pathRoot . $path . '/public';
+
+        $contenidoIndex = $templateService->render(
+            __DIR__ . '/../templates/public_index.tpl.php',
+            [
+                'BasePath' => $basePath
+            ]
+        );
+
+        file_put_contents("$dirPublic/index.php", $contenidoIndex);
     }
 }

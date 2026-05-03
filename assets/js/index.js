@@ -1,5 +1,10 @@
 $(".card-footer button").attr("disabled", true);
-$("#txtNombreApi,#txtNombreClase,#txtNombreFront").attr("disabled", true);
+$("#chcDirectorioPadre").prop("checked", false).trigger("change");
+$("#txtNombreApi,#txtNombreClase,#txtNombreFront,#txtDirectorioPadre").attr("disabled", true);
+
+$("#chcDirectorioPadre").on("change", function () {
+    $("#txtDirectorioPadre").attr("disabled", !this.checked);
+});
 
 $("#txtNombreModulo").on("keyup", function () {
     $("#txtNombreApi").attr("disabled", this.value ? false : true);
@@ -14,34 +19,35 @@ $("#txtNombreFront").on("keyup", function () {
     $(".card-footer button").attr("disabled", this.value ? false : true);
 });
 $("#btnCrearEstruc").on("click", function () {
+    let nomDirPadre = $("#txtDirectorioPadre").val();
     let nomModulo = $("#txtNombreModulo").val();
     let nomAPI = $("#txtNombreApi").val();
     let nomClase = $("#txtNombreClase").val();
     let nomFront = $("#txtNombreFront").val();
-    crearEstructura(nomModulo, nomAPI, nomClase, nomFront);
+    crearEstructura(nomModulo, nomAPI, nomClase, nomFront, nomDirPadre);
 });
 
 $("#btnCancelarEstruc").on("click", function () {
     $(".card-body input").val(null);
-    $("#txtNombreApi,#txtNombreClase,#txtNombreFront").attr("disabled", true);
+    $("#txtNombreApi,#txtNombreClase,#txtNombreFront,#txtDirectorioPadre").attr("disabled", true);
     $(".card-footer button").attr("disabled", true);
 });
 
-function crearEstructura(nomModulo, nomAPI, nomClase, nomFront) {
+function crearEstructura(nomModulo, nomAPI, nomClase, nomFront, nomDirPadre) {
     $.ajax({
         url: '../src/services/index.php',
         async: false,
         type: "POST",
-        data: { nomModulo, nomAPI, nomClase, nomFront },
+        data: { nomModulo, nomAPI, nomClase, nomFront, nomDirPadre },
         success: function (response, status, xhr) {
-            console.log(response, status, xhr)
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
                 text: "Estructura creada correctamente"
             });
             $(".card-body input").val(null);
-            $("#txtNombreApi,#txtNombreClase,#txtNombreFront").attr("disabled", true);
+            $("#chcDirectorioPadre").prop("checked", false).trigger("change");
+            $("#txtNombreApi,#txtNombreClase,#txtNombreFront,#txtDirectorioPadre").attr("disabled", true);
             $(".card-footer button").attr("disabled", true);
 
             response = JSON.parse(response);
