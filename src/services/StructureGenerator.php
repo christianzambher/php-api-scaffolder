@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/TemplateService.php';
+
 class StructureGenerator {
 
     public function generate($data) {
@@ -23,73 +25,23 @@ class StructureGenerator {
         }
     }
     private function createFunciones($path, $data) {
+        $templateService = new TemplateService();
+
+        //Directorio Funciones
         $dirFunciones = $path . '/' . "funciones";
 
-        //Archivo funciones.class.php
+        //Nombre de la Clase
         $clase = $data["nomClase"];
         $nombreClase = 'cls' . $clase;
 
-        $fileFunciones = "funciones.class.php";
-        $fileFuncionesDir = fopen($dirFunciones . '/' . $fileFunciones, "w");
-
-        $dataFunciones = "<?php
-        ini_set('display_errors', 1);
-        require __DIR__ . '/../../model/connection/connection.class.php';
-
-        class " . $nombreClase . " extends Conexion{
-        /**
-         * conexionSQL
-         * @var mixed
-         */
-        private $" . "conexionSQL;
-        private $" . "stmnt;
-
-        function get(){}
-        function getById($" . "id){}
-        function post($" . "data){}
-
-        /**
-         * Ejecuta una consulta en Base de datos (select,insert, update o delete)
-         * @param int $" . "Cadena que contiene la consula a ejecutar
-         * @param array $" . "Parametros array asociativo para pasar atributos a la cadena en consulta preparada
-         * @param int $" . "id 1 o 0 dependiendo si requieres el ultimo id insertado de la consulta a ejecutar
-         * @param int opcional $" . "respuesta parametro para indicar si debuelve o no un resultset
-         */
-        function ejecutarConsulta($" . "consulta, $" . "parametros, $" . "id, $" . "respuesta = null)
-        {
-            try {
-                $" . "this->conexionSQL = Conexion::getInstance()->obtenerConexion();
-                $" . "this->stmnt = $" . "this->conexionSQL->prepare($" . "consulta);
-                if (sizeof($" . "parametros) > 0) {
-
-                    foreach ($" . "parametros as $" . "indice => $" . "valor) :
-                        $" . "this->stmnt->bindValue(':' . $" . "indice, $" . "valor);
-
-                    endforeach;
-                }
-                $" . "this->stmnt->execute();
-                if ($" . "id == 1) {
-                    return $" . "this->conexionSQL->lastInsertId();
-                } else {
-                    if (!is_null($" . "respuesta)) {
-                        $" . "resultado = $" . "this->stmnt->fetchAll(PDO::FETCH_ASSOC);
-                        return $" . "resultado;
-                    } else {
-                        $" . "resultado = array('error' => 1, 'mensaje' => 'Operacion exitosa');
-                        return $" . "resultado;
-                    }
-                }
-            } catch (PDOException $" . "e) {
-                $" . "resultado = array('error' => 4, 'mensaje' => 'Error al ejecutar consulta, error:' . $" . "e->getMessage());
-                return $" . "resultado;
-            } finally {
-                Conexion::getInstance()->cerrarConexion();
-                $" . "this->conexionSQL = null;
-                $" . "this->stmnt = null;
-            }
-        }
-        }";
-        fwrite($fileFuncionesDir, $dataFunciones);
+        //Archivo Funciones
+        $contenido = $templateService->render(
+        __DIR__ . '/../templates/funciones.tpl.php',
+            [
+                'ClassName' => $nombreClase
+            ]
+        );
+        file_put_contents($dirFunciones . '/funciones.class.php', $contenido);
     }
     private function createHtml($path, $data) {
         $nombreFront = $data["nomFront"];
@@ -273,6 +225,8 @@ class StructureGenerator {
         fwrite($fileServicesDir, $dataServices);
     }
     private function createRoutes($path, $data) {
+        $templateService = new TemplateService();
+
         //Directorio Rutas
         $dirRutas = $path . '/' . "rutas";
 
@@ -281,36 +235,15 @@ class StructureGenerator {
         $nombreClase = 'cls' . $clase;
         
         //Archivo Rutas
-        $fileRutas = "rutas.php";
-        $fileRutasDir = fopen($dirRutas . '/' . $fileRutas, "w");
-        $dataRutas = '<?php
-        ini_set("display_errors", 1);
-        require __DIR__ . "/../funciones/funciones.class.php";
-        
-        $obj' . $clase . ' = new ' . $nombreClase . '();    
-        
-        $app->get("/get", function ($request, $response, $args) use ($obj' . $clase . ') {
-            $resultado = $obj' . $clase . '->get();
-            $response->getBody()->write((string)json_encode($resultado));
-            $response = $response->withHeader("Content-Type", "application/json");
-            return $response;
-        });
+        $contenido = $templateService->render(
+            __DIR__ . '/../templates/rutas.tpl.php',
+            [
+                'Class' => $clase,
+                'ClassName' => $nombreClase
+            ]
+        );
 
-        $app->get("/getById/{id}", function ($request, $response, $args) use ($obj' . $clase . ') {
-            $id = $args["id"];
-            $response->getBody()->write((string)json_encode($obj' . $clase . '->getById($id)));
-            $response = $response->withHeader("Content-Type", "application/json");
-            return $response;
-        });
-
-        $app->post("/post", function ($request, $response, $args) use ($obj' . $clase . ') {
-            $data = $request->getParsedBody()["data"];
-            $response->getBody()->write((string)json_encode($obj' . $clase . '->post($data)));
-            $response = $response->withHeader("Content-Type", "application/json");
-            return $response;
-        });
-        ';
-        fwrite($fileRutasDir, $dataRutas);
+        file_put_contents($dirRutas . '/rutas.php', $contenido);
     }
     private function createPublic($path, $data) {
         //Directorio Public
