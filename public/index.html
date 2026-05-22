@@ -13,18 +13,29 @@
   <script src="../assets/js/jquery-3.6.0.min.js"></script>
   <script src="../assets/js/bootstrap.min.js"></script>
   <script src="../assets/js/sweetalert2@11.js"></script>
+  <link rel="stylesheet" href="../assets/css/custom.css" />
 </head>
 
-<body class="bg-dark" style="background-image: url(../assets/css/back.png); background-repeat: no-repeat; background-size: 100%;">
-  <div class="container bg-white">
-    <h2>Creación de la Estructura</h2>
+<body class="app-body">
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn " id="themeToggle">
+      <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+  </div>
+  <div class="container py-5">
+    <div class="mb-4">
+      <h1 class="fw-bold">Creador de Estructura</h1>
+      <p class="text-secondary">
+        Genera rápidamente la estructura base de tus módulos
+      </p>
+    </div>
     <div class="card">
       <div class="card-header">
         <i class="fas fa-exclamation-circle"></i>&nbsp;Información necesaria
       </div>
       <div class="card-body">
-        <div class="row card-text">
-          <div class="col-sm">
+        <div class="row g-4">
+          <div class="col-lg">
             <div class="form-group">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="chcDirectorioPadre" checked>
@@ -32,46 +43,47 @@
                   Tiene directorio Padre?
                 </label>
               </div>
-              <input type="text" id="txtDirectorioPadre" class="form-control form-control-sm">
+              <input type="text" id="txtDirectorioPadre" class="form-control">
             </div>
           </div>
-          <div class="col-sm">
+          <div class="col-lg">
             <div class="form-group">
               <label for="txtNombreModulo">Nombre del Modulo:</label>
-              <input type="text" id="txtNombreModulo" class="form-control form-control-sm">
+              <input type="text" id="txtNombreModulo" class="form-control">
             </div>
           </div>
-          <div class="col-sm">
+          <div class="col-lg">
             <div class="form-group">
               <label for="txtNombreApi">Nombre de la API:</label>
-              <input type="text" id="txtNombreApi" class="form-control form-control-sm">
+              <input type="text" id="txtNombreApi" class="form-control">
             </div>
           </div>
-          <div class="col-sm">
+          <div class="col-lg">
             <div class="form-group">
               <label for="txtNombreClase">Nombre de la Clase:</label>
-              <input type="text" id="txtNombreClase" class="form-control form-control-sm">
+              <input type="text" id="txtNombreClase" class="form-control">
             </div>
           </div>
-          <div class="col-sm">
+          <div class="col-lg">
             <div class="form-group">
               <label for="txtNombreFront">Nombre de los Archivos FRONT:</label>
-              <input type="text" id="txtNombreFront" class="form-control form-control-sm">
+              <input type="text" id="txtNombreFront" class="form-control">
             </div>
           </div>
         </div>
       </div>
       <div class="card-footer">
-        <button class="btn btn-sm btn-secondary" id="btnCancelarEstruc">
+        <button class="btn btn-secondary" id="btnCancelarEstruc">
           <i class="fas fa-window-close"></i>&nbsp;<span>Cancelar</span>
         </button>
-        <button class="btn btn-sm btn-dark" id="btnCrearEstruc">
+        <button class="btn btn-dark" id="btnCrearEstruc">
           <i class="fas fa-plus-square"></i>&nbsp;<span>Crear</span>
         </button>
       </div>
     </div>
   </div>
   <script src="../assets/js/index.js"></script>
+  <script src="../assets/js/theme.js"></script>
 </body>
 
 </html>
